@@ -6,13 +6,6 @@ export default function PasswordItem({ password, removeData }){
 
   const [visible, setVisibile] = useState(false)
 
-
-  function handleVisible(){
-    if(visible){ setVisibile(false)}
-    else{setVisibile(true)}
-  }
-
-
   return(
     <Pressable
       style={styles.areaItem}
@@ -25,7 +18,7 @@ export default function PasswordItem({ password, removeData }){
       <TouchableOpacity
         style={{ marginEnd: 10, }}
         activeOpacity={0.7}
-        onPress={handleVisible}
+        onPress={ () => setVisibile(!visible) }
       >
         <Feather name={visible ? 'eye' : 'eye-off'} size={20} color='#FFF'/>
       </TouchableOpacity>
