@@ -8,11 +8,15 @@ import {
   TouchableOpacity 
 } from 'react-native'
 
-import { supabaseSignUp } from '../../services/api/supabaseService'
+import { supabaseSignUp } from '../../../services/api/supabaseService'
+import { useNavigation } from '@react-navigation/native'
 
 
-export default function AuthScreen(){
+export default function SignUp(){
 
+  const navigation = useNavigation()
+
+  const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
 
@@ -31,8 +35,17 @@ export default function AuthScreen(){
       <StatusBar barStyle={'light-content'}/>
 
       <Text style={styles.title}>
-        TELA LOGIN
+        TELA SIGNUP
       </Text>
+
+      <TextInput 
+        style={styles.input}
+        placeholder='Nome'
+        placeholderTextColor={'#AAA'}
+        value={name}
+        onChangeText={setName}
+        autoCapitalize='words'
+      />
 
       <TextInput 
         style={styles.input}
@@ -50,6 +63,7 @@ export default function AuthScreen(){
         secureTextEntry
         value={password}
         onChangeText={setPassword}
+        autoCapitalize='none'
       />
 
       <TouchableOpacity
@@ -57,14 +71,15 @@ export default function AuthScreen(){
         style={styles.button}
         onPress={handleLogin}
       >
-        <Text style={styles.buttonText}>Entrar</Text>
+        <Text style={styles.buttonText}>Cadastrar</Text>
       </TouchableOpacity>
 
 
       <TouchableOpacity
         style={styles.forgotPass}
+        onPress={ () => navigation.navigate('SignIn') }
       >
-        <Text style={styles.forgotPassText}>Não tem uma conta? Clique aqui</Text>
+        <Text style={styles.forgotPassText}>Já tem uma conta? Faça Login</Text>
       </TouchableOpacity>
 
     </SafeAreaView>

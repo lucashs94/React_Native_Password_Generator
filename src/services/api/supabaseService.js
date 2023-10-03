@@ -8,15 +8,3 @@ const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS
 export const supabase = createClient(supabaseUrl, supabaseKey)
 
 
-export async function supabaseSignUp(email, password){
-  const { data, error } = await supabase.auth.signUp({
-    email,
-    password,
-  })
-
-  if(error){
-    return error.message
-  }
-
-  return data.user
-}
