@@ -22,11 +22,12 @@ export default function SignUp(){
 
 
   async function handleLogin(){
-    const response = await supabaseSignUp(email, password)
-    setEmail('')
-    setPassword('')
 
-    console.log(response)
+    if(name !== '' && email !== '' && password !== ''){
+      const response = await supabaseSignUp(email, password)
+      setEmail('')
+      setPassword('')
+    }
   }
 
 

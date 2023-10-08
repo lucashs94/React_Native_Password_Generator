@@ -1,10 +1,13 @@
 import { createContext, useContext, useEffect, useState } from 'react'
-import { supabase } from '../services/api/supabaseService'
+
+import useSupaDB from '../hooks/useSupaDB'
 
 
 export const AuthContext = createContext({})
 
 export function AuthProvider({ children }){
+
+  const { signIn, signUp, signOut } = useSupaDB()
 
   const [user, setUser] = useState(null)
   const [loadingAuth, setLoadingAuth] = useState(false)
@@ -15,20 +18,18 @@ export function AuthProvider({ children }){
 
 
   async function AuthSignUp(name, email, password){
-    const { data, error } = await supabase.auth.signUp({
-      email,
-      password,
-      options:{
-        data:{
-          name
-        }
-      }
-    })
-    .then(() => {
 
-    })
-    .catch( err => console.log(err) )
+    setLoadingAuth(true)
 
+    const response = await signUp(name, email, password)
+
+    if(response.error){
+      setLoadingAuth(false)
+      return
+    }
+    
+    setLoadingAuth(false)
+    
   }
 
 
@@ -36,27 +37,21 @@ export function AuthProvider({ children }){
 
     setLoadingAuth(true)
 
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    })
-    .then( () => {
+    const response = await signIn(email, password)
 
-      // preencher USER
-      // naviagte para appRoute
-
-    })
-    .catch( err => console.log(err))
-    .finally( () => {
+    if(response.error){
       setLoadingAuth(false)
-    })
+      return
+    }
+    
+    setLoadingAuth(false)
   }
 
 
   async function AuthSignOut(){
 
-    const { error } = await supabase.auth.signOut()
-    if(error) return error.message
+    await signOut()
+    setUser('')
   }
 
 

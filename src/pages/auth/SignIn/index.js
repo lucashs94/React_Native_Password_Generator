@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { 
+  ActivityIndicator,
   SafeAreaView, 
   StatusBar, 
   StyleSheet, 
@@ -8,11 +9,13 @@ import {
   TouchableOpacity 
 } from 'react-native'
 
-import { supabaseSignUp } from '../../../services/api/supabaseService'
 import { useNavigation } from '@react-navigation/native'
+import useAuthContext from '../../../contexts/authContext'
 
 
 export default function SignIn(){
+
+  const { loadingAuth, AuthSignIn } = useAuthContext()
 
   const navigation = useNavigation()
 
@@ -21,11 +24,12 @@ export default function SignIn(){
 
 
   async function handleLogin(){
-    const response = await supabaseSignUp(email, password)
-    setEmail('')
-    setPassword('')
+    if(email !== '' && password !== ''){
+      await AuthSignIn(email, password)
+      setEmail('')
+      setPassword('')
+    }
 
-    console.log(response)
   }
 
 
@@ -39,7 +43,7 @@ export default function SignIn(){
 
       <TextInput 
         style={styles.input}
-        placeholder='seuemail@email.com'
+        placeholder='seu_email@email.com'
         placeholderTextColor={'#AAA'}
         value={email}
         onChangeText={setEmail}
@@ -60,8 +64,14 @@ export default function SignIn(){
         activeOpacity={0.8}
         style={styles.button}
         onPress={handleLogin}
+        disabled={loadingAuth}
       >
-        <Text style={styles.buttonText}>Entrar</Text>
+        {loadingAuth ? (
+          <ActivityIndicator color='#FFF'/>
+        ): 
+        (
+          <Text style={styles.buttonText}>Entrar</Text>
+        )}
       </TouchableOpacity>
 
 
