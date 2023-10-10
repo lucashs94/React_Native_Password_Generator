@@ -39,35 +39,44 @@ const useSupaDB = () => {
   }  
   
 
+  const getUser = async (id) => {
+
+    const { data, error } = await supabase
+    .from('users')
+    .select('name')
+    .eq('id', id)
+
+    return {data, error}
+  }
+
+
   const createUser = async (id, name, email) => {
 
-    const { error } = await supabase
+    const { data, error } = await supabase
     .from('users')
     .insert({ 
       id, 
       name,
       email,
     })
+    .select()
 
-    if(error){
-      return error.message
-    }
+    return {data,error}
   }
 
 
   const updateUser = async (id, name, email) => {
     
-    const { error } = await supabase
+    const { data, error } = await supabase
     .from('users')
     .update({ 
       name,
       email,
     })
     .eq('id', id)
+    .select()
 
-    if(error){
-      return error.message
-    }
+    return {data, error}
   }
 
 
@@ -75,6 +84,7 @@ const useSupaDB = () => {
     signUp,
     signIn,
     signOut,
+    getUser,
     createUser,
     updateUser,
   }

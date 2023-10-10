@@ -42,10 +42,33 @@ const useStorage = () => {
   }
 
 
+  const getUser = async () => {
+    try {
+      const user = await AsyncStorage.getItem('@user')
+      return JSON.parse(user) || null
+
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+
+  const saveUser = async (value) => {
+    try {
+      await AsyncStorage.setItem('@user', JSON.stringify(value))
+
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+
   return{
     getItem,
     saveItem,
     removeItem,
+    getUser,
+    saveUser,
   }
 
 }

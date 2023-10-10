@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { 
+  ActivityIndicator,
   SafeAreaView, 
   StatusBar, 
   StyleSheet, 
@@ -8,11 +9,13 @@ import {
   TouchableOpacity 
 } from 'react-native'
 
-import { supabaseSignUp } from '../../../services/api/supabaseService'
 import { useNavigation } from '@react-navigation/native'
+import useAuthContext from '../../../contexts/authContext'
 
 
 export default function SignUp(){
+
+  const { AuthSignUp, loadingAuth } = useAuthContext()
 
   const navigation = useNavigation()
 
@@ -21,10 +24,17 @@ export default function SignUp(){
   const [password, setPassword] = useState('')
 
 
-  async function handleLogin(){
+  async function handleSignUp(){
 
     if(name !== '' && email !== '' && password !== ''){
-      const response = await supabaseSignUp(email, password)
+      const err = await AuthSignUp(name, email, password)
+
+      if(err){
+        console.log(err)
+      }
+
+      navigation.navigate('SignIn')
+      setName('')
       setEmail('')
       setPassword('')
     }
@@ -55,6 +65,7 @@ export default function SignUp(){
         value={email}
         onChangeText={setEmail}
         autoCapitalize='none'
+        keyboardType='email-address'
       />
 
       <TextInput 
@@ -70,9 +81,15 @@ export default function SignUp(){
       <TouchableOpacity
         activeOpacity={0.8}
         style={styles.button}
-        onPress={handleLogin}
+        onPress={handleSignUp}
+        disabled={loadingAuth}
       >
-        <Text style={styles.buttonText}>Cadastrar</Text>
+        {loadingAuth ? (
+          <ActivityIndicator color='#FFF'/>
+        ): 
+        (
+          <Text style={styles.buttonText}>Cadastrar</Text>
+        )}
       </TouchableOpacity>
 
 

@@ -1,4 +1,5 @@
 import 'react-native-url-polyfill/auto'
+import 'react-native-gesture-handler';
 import { NavigationContainer } from "@react-navigation/native";
 import Routes from "./src/routes";
 import { AuthProvider } from './src/contexts/authContext';
@@ -6,10 +7,10 @@ import { AuthProvider } from './src/contexts/authContext';
 export default function App() {
 
   return (
-    <AuthProvider>
-      <NavigationContainer>
+    <NavigationContainer>
+      <AuthProvider>
         <Routes />
-      </NavigationContainer>
-    </AuthProvider>
+      </AuthProvider>
+    </NavigationContainer>
   );
 }

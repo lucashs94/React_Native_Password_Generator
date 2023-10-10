@@ -24,12 +24,12 @@ export default function SignIn(){
 
 
   async function handleLogin(){
+    
     if(email !== '' && password !== ''){
       await AuthSignIn(email, password)
       setEmail('')
       setPassword('')
     }
-
   }
 
 
@@ -48,6 +48,7 @@ export default function SignIn(){
         value={email}
         onChangeText={setEmail}
         autoCapitalize='none'
+        keyboardType='email-address'
       />
 
       <TextInput 

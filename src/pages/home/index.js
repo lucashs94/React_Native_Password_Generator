@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Image, Modal, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { StatusBar, Image, Modal, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 import Slider from '@react-native-community/slider'
 import ModalPassword from '../../components/modal';
@@ -21,12 +21,11 @@ export default function Home() {
 
     setPassword(pass)
     setModalVisible(true)
-
   }
-
 
   return (
     <View style={styles.container}>
+      <StatusBar barStyle={'dark-content'}/>
       <Image 
         source={require('../../assets/logo.png')}
         style={styles.logo}
