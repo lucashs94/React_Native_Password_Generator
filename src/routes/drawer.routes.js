@@ -1,11 +1,13 @@
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import AppRoutes from './app.routes';
+import SignOut from '../pages/auth/SignOut';
 
 
 const Drawer = createDrawerNavigator();
 
 
 export default function DrawerRoutes() {
+
   return (
     <Drawer.Navigator
       screenOptions={{
@@ -14,6 +16,7 @@ export default function DrawerRoutes() {
     >
 
       <Drawer.Screen name="Home" component={AppRoutes} />
+      <Drawer.Screen name="Logout" component={SignOut} />
       
     </Drawer.Navigator>
   );

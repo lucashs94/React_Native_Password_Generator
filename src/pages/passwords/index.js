@@ -8,12 +8,14 @@ import { Feather } from '@expo/vector-icons'
 import useStorage from '../../hooks/useStorage'
 import PasswordItem from './components/passwordItem'
 import useAuthContext from '../../contexts/authContext'
+import useToastNotify from '../../contexts/toastContext'
 
 export default function Passwords(){
 
   const navigation = useNavigation()
 
   const { AuthSignOut } = useAuthContext()
+  const { newNotify } = useToastNotify()
 
   const [listPass, setListPass] = useState([])
   const isFocused = useIsFocused()
@@ -87,7 +89,11 @@ export default function Passwords(){
         <TouchableOpacity
           activeOpacity={0.9}
           style={styles.fabButton}
-          onPress={() => {}}
+          onPress={() => newNotify({
+            type: 'error',
+            message: 'minha mensagem de notificao',
+            iconName: 'lock',
+          })}
         >
           <Text style={styles.fabButtonText}>+</Text>
         </TouchableOpacity>
@@ -103,6 +109,7 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
+    backgroundColor: '#ddd',
   },
   image:{
     marginTop: -40,
