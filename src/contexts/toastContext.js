@@ -1,11 +1,11 @@
-import { createContext, useContext, useEffect, useState } from 'react'
+import { createContext, useContext, useState } from 'react'
 
 
 export const ToastContext = createContext({})
 
 export function ToastContextProvider({ children }){
 
-  initial_state = {
+  const initial_state = {
     type: null,
     message: null,
     duration: 4000,

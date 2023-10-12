@@ -7,14 +7,13 @@ import { Feather } from '@expo/vector-icons'
 
 import useStorage from '../../hooks/useStorage'
 import PasswordItem from './components/passwordItem'
-import useAuthContext from '../../contexts/authContext'
 import useToastNotify from '../../contexts/toastContext'
+import { themeApp } from '../../themes/GlobalTheme'
 
 export default function Passwords(){
 
   const navigation = useNavigation()
 
-  const { AuthSignOut } = useAuthContext()
   const { newNotify } = useToastNotify()
 
   const [listPass, setListPass] = useState([])
@@ -38,27 +37,25 @@ export default function Passwords(){
   }
 
 
-  async function logOut(){
-    await AuthSignOut()
-  }
-
-  function openDrawer(){
-    navigation.openDrawer()
-  }
-
-
   return(
     <>
       <SafeAreaView style={styles.statusBar} />
       <StatusBar barStyle={'light-content'}/>
-      <View 
-        style={styles.container}
-      >
+
+      <View style={styles.container}>
+
         <View style={styles.header}>
 
           <TouchableOpacity
+            style={styles.perfilIcon}
+            onPress={ () => {} }
+          >
+            <Text style={styles.perfilIconText}>LS</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
             style={styles.menuIcon}
-            onPress={() => openDrawer()}
+            onPress={() => navigation.openDrawer()}
           >
             <Feather name='menu' size={30} color='#FFF'/>
           </TouchableOpacity>
@@ -68,7 +65,7 @@ export default function Passwords(){
             source={require('../../assets/logo.png')}
             resizeMode='contain'
           />
-          <Text style={styles.title}>MINHAS  SENHAS</Text>
+          <Text style={styles.title}>MINHAS SENHAS</Text>
         </View>
 
         <View style={styles.content}>
@@ -91,7 +88,7 @@ export default function Passwords(){
           style={styles.fabButton}
           onPress={() => newNotify({
             type: 'error',
-            message: 'minha mensagem de notificao',
+            message: 'Minha mensagem de notificao',
             iconName: 'lock',
           })}
         >
@@ -105,7 +102,7 @@ export default function Passwords(){
 const styles = StyleSheet.create({
   statusBar:{
     flex: 0, 
-    backgroundColor: '#344de9',
+    backgroundColor: themeApp.colors.primary,
   },
   container: {
     flex: 1,
@@ -123,10 +120,34 @@ const styles = StyleSheet.create({
     left: 15,
     width: 35,
   },
+  perfilIcon:{
+    position: 'absolute',
+    backgroundColor: '#aaa',
+    width: 40,
+    height: 40,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 50,
+    right: 20,
+    top: -30,
+    borderWidth: 1,
+    borderColor: 'red',
+  },
+  perfilIconText:{
+    fontWeight: 'bold',
+    color: '#FFF',
+  },
   header:{
-    backgroundColor: '#344de9',
-    paddingBottom: 14,
+    backgroundColor: themeApp.colors.primary,
+    paddingBottom: 25,
     paddingHorizontal: 14,
+    borderBottomRightRadius: 25,
+    borderBottomLeftRadius: 25,
+
+    elevation: 5,
+    shadowColor: 'black',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
   },
   title:{
     alignSelf: 'center',
@@ -146,7 +167,7 @@ const styles = StyleSheet.create({
   },
   fabButton:{
     position: 'absolute',
-    backgroundColor: '#392de9',
+    backgroundColor: themeApp.colors.primary,
     width: 60,
     height: 60,
     alignItems: 'center',

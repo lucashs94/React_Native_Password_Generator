@@ -34,7 +34,7 @@ export default function Toast(){
 
   const [pos] = useState(new Animated.Value(-(getStatusBarHeight() + 60)))
 
-  const { notify, setNotify, hideNotify } = useToastNotify()
+  const { notify, hideNotify } = useToastNotify()
 
 
   useEffect( () => {
@@ -60,6 +60,7 @@ export default function Toast(){
       hideToast()
     }, notify.duration);
   }
+
 
   function hideToast(){
     Animated.timing(pos, {
@@ -123,7 +124,7 @@ const styles = StyleSheet.create({
   container: {
     position: 'absolute',
     width,
-    paddingHorizontal: 7,
+    paddingHorizontal: 20,
     paddingBottom: 20,
     paddingTop: getStatusBarHeight() + 7,
     alignSelf: 'center',
@@ -137,6 +138,6 @@ const styles = StyleSheet.create({
   msgText:{
     color: '#FFF',
     fontSize: 14,
-    marginHorizontal: 10,
+    marginHorizontal: 20,
   },
 })  
