@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { Pressable, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import { Feather } from '@expo/vector-icons'
+import { themeApp } from '@themes/GlobalTheme'
 
 export default function PasswordItem({ password, removeData }){
 
@@ -75,7 +76,7 @@ const styles = StyleSheet.create({
   },
   textItem:{
     fontSize: 18,
-    color: '#344de9',
+    color: themeApp.colors.primary,
     paddingTop: 10,
   },
   textDate:{

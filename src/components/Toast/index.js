@@ -16,7 +16,6 @@ import { Feather } from '@expo/vector-icons'
 import useToastNotify from '../../contexts/toastContext'
 
 
-
 const {width} = Dimensions.get('window')
 var timer = null
 

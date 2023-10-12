@@ -1,14 +1,17 @@
 import React, { useEffect, useState } from 'react'
-import { FlatList, Image, StatusBar, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { Dimensions, FlatList, Image, Pressable, StatusBar, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import { useIsFocused, useNavigation } from '@react-navigation/native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { Feather } from '@expo/vector-icons'
 
+import useStorage from '@hooks/useStorage'
+import useToastNotify from '@contexts/toastContext'
+import { themeApp } from '@themes/GlobalTheme'
 
-import useStorage from '../../hooks/useStorage'
 import PasswordItem from './components/passwordItem'
-import useToastNotify from '../../contexts/toastContext'
-import { themeApp } from '../../themes/GlobalTheme'
+import FabItem from './components/FabItem'
+
+const {height, width} = Dimensions.get('window')
 
 export default function Passwords(){
 
@@ -50,7 +53,9 @@ export default function Passwords(){
             style={styles.perfilIcon}
             onPress={ () => {} }
           >
-            <Text style={styles.perfilIconText}>LS</Text>
+            <Text style={styles.perfilIconText}>
+              LS
+            </Text>
           </TouchableOpacity>
 
           <TouchableOpacity
@@ -65,7 +70,10 @@ export default function Passwords(){
             source={require('../../assets/logo.png')}
             resizeMode='contain'
           />
-          <Text style={styles.title}>MINHAS SENHAS</Text>
+
+          <Text style={styles.title}>
+            MINHAS SENHAS
+          </Text>
         </View>
 
         <View style={styles.content}>
@@ -75,26 +83,46 @@ export default function Passwords(){
             data={listPass}
             keyExtractor={ item => String(item) }
             renderItem={ ({ item }) => (
+
               <PasswordItem 
                 password={item} 
                 removeData={ () => handleRemovePass(item) }
               />
+
             )}
           />
         </View>
 
-        <TouchableOpacity
-          activeOpacity={0.9}
-          style={styles.fabButton}
-          onPress={() => newNotify({
+      </View>
+
+
+      <TouchableOpacity
+        activeOpacity={0.9}
+        style={styles.fabButton}
+        onPress={() => {
+          
+          newNotify({
             type: 'error',
             message: 'Minha mensagem de notificao',
             iconName: 'lock',
-          })}
-        >
-          <Text style={styles.fabButtonText}>+</Text>
-        </TouchableOpacity>
-      </View>
+          })
+        }}
+      >
+        <Text style={styles.fabButtonText}>
+          +
+        </Text>
+      </TouchableOpacity>
+
+      
+      <Pressable
+        style={styles.fabArea}
+      >
+          <FabItem iconName={'user'} order={1} isActive={true}/>
+          <FabItem iconName={'lock'} order={2} isActive={true}/>
+
+      </Pressable>
+      
+
     </>
   )
 }
@@ -180,5 +208,14 @@ const styles = StyleSheet.create({
   fabButtonText:{
     color: '#FFF',
     fontSize: 30,
+  },
+  fabArea:{
+    position: 'absolute',
+    height,
+    width,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    alignItems: 'center',
+    justifyContent: 'center',
+    zIndex: 50,
   },
 })
