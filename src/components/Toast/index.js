@@ -10,10 +10,12 @@ import {
   TouchableWithoutFeedback, 
   View 
 } from 'react-native'
-import { getStatusBarHeight } from 'react-native-status-bar-height'
 
+import { getStatusBarHeight } from 'react-native-status-bar-height'
 import { Feather } from '@expo/vector-icons'
+
 import useToastNotify from '../../contexts/toastContext'
+import { themeApp } from '../../themes/GlobalTheme'
 
 
 const {width} = Dimensions.get('window')
@@ -21,13 +23,6 @@ var timer = null
 
 
 export default function Toast(){
-
-  const colors = {
-    success: '#43D29E',
-    warning: '#FD951f',
-    error: '#E91E63',
-    default: '#3A405B',
-  }
 
   const [styleStatusBar, setStyleStatusBar] = useState('dark-content')
 
@@ -102,7 +97,7 @@ export default function Toast(){
           style={[
             styles.container, 
             { 
-              backgroundColor: colors[notify.type] ,
+              backgroundColor: themeApp.notifications.colors[notify.type] ,
               transform: [{translateY: pos}]
             }
           ]}
@@ -137,6 +132,7 @@ const styles = StyleSheet.create({
   msgText:{
     color: '#FFF',
     fontSize: 14,
+    fontWeight: 'bold',
     marginHorizontal: 20,
   },
 })  

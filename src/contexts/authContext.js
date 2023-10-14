@@ -34,7 +34,7 @@ export function AuthProvider({ children }){
 
 
   async function AuthSignUp(name, email, password){
-
+    
     setLoadingAuth(true)
 
     const response = await signUp(name, email, password)

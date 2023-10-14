@@ -1,27 +1,29 @@
 import React, { useEffect, useState } from 'react'
-import { Dimensions, FlatList, Image, Pressable, StatusBar, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { FlatList, Image, Pressable, StatusBar, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import { useIsFocused, useNavigation } from '@react-navigation/native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { Feather } from '@expo/vector-icons'
+import { Ionicons } from '@expo/vector-icons'
 
 import useStorage from '@hooks/useStorage'
 import useToastNotify from '@contexts/toastContext'
-import { themeApp } from '@themes/GlobalTheme'
+import { themeApp } from '../../themes/GlobalTheme'
 
 import PasswordItem from './components/passwordItem'
 import FabItem from './components/FabItem'
 
-const {height, width} = Dimensions.get('window')
+
 
 export default function Passwords(){
 
   const navigation = useNavigation()
+  const isFocused = useIsFocused()
 
+  const { getItem, removeItem } = useStorage()
   const { newNotify } = useToastNotify()
 
   const [listPass, setListPass] = useState([])
-  const isFocused = useIsFocused()
-  const { getItem, removeItem } = useStorage()
+  const [isFabActive, setIsFabActive] = useState(false)
 
 
   useEffect(() =>{
@@ -31,6 +33,8 @@ export default function Passwords(){
     }
      
     loadPasswords()
+    setIsFabActive(false)
+    
   }, [isFocused])
 
 
@@ -74,6 +78,7 @@ export default function Passwords(){
           <Text style={styles.title}>
             MINHAS SENHAS
           </Text>
+          
         </View>
 
         <View style={styles.content}>
@@ -97,32 +102,41 @@ export default function Passwords(){
 
 
       <TouchableOpacity
-        activeOpacity={0.9}
+        activeOpacity={0.7}
         style={styles.fabButton}
-        onPress={() => {
-          
-          newNotify({
-            type: 'error',
-            message: 'Minha mensagem de notificao',
-            iconName: 'lock',
-          })
-        }}
+        onPress={ () => setIsFabActive(!isFabActive) }
       >
-        <Text style={styles.fabButtonText}>
-          +
-        </Text>
+        {isFabActive ? 
+          <Ionicons name="close" size={30} color="white" />
+        :
+          <Feather name="plus" size={30} color="white" />
+        }
       </TouchableOpacity>
 
       
-      <Pressable
-        style={styles.fabArea}
-      >
-          <FabItem iconName={'user'} order={1} isActive={true}/>
-          <FabItem iconName={'lock'} order={2} isActive={true}/>
+      {isFabActive && 
+        <Pressable
+          style={styles.fabArea}
+          onPress={ () => setIsFabActive(false) }
+        >
+          <FabItem 
+            iconName={'user'} 
+            order={1} 
+            isActive={isFabActive} 
+            title={'Senha conhecida'}
+            page={'knownPasswords'}
+          />
 
-      </Pressable>
-      
+          <FabItem 
+            iconName={'lock'} 
+            order={2} 
+            isActive={isFabActive} 
+            title={'Gerar senha aleatoria'}
+            page={'randomPasswords'}
+          />
 
+        </Pressable>
+      }
     </>
   )
 }
@@ -207,13 +221,13 @@ const styles = StyleSheet.create({
   },
   fabButtonText:{
     color: '#FFF',
-    fontSize: 30,
+    fontSize: 50,
   },
   fabArea:{
     position: 'absolute',
-    height,
-    width,
-    backgroundColor: 'rgba(0,0,0,0.5)',
+    height: themeApp.sizes.window.height,
+    width: themeApp.sizes.window.width,
+    backgroundColor: 'rgba(0,0,0,0.7)',
     alignItems: 'center',
     justifyContent: 'center',
     zIndex: 50,

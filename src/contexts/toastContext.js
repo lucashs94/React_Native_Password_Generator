@@ -17,6 +17,7 @@ export function ToastContextProvider({ children }){
 
 
   function newNotify(toast){
+
     setNotify({
       type: toast.type || 'default',
       message: toast.message || '',

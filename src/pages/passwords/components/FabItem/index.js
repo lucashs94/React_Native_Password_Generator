@@ -1,6 +1,7 @@
 import React from 'react'
-import { StyleSheet, TouchableOpacity } from 'react-native'
+import { StyleSheet, Text, TouchableOpacity } from 'react-native'
 import { Feather } from '@expo/vector-icons'
+import { useNavigation } from '@react-navigation/native'
 
 
 function getBottom(inte){
@@ -10,15 +11,22 @@ function getBottom(inte){
 }
 
 
-export default function FabItem({ iconName, order, isActive }){
+export default function FabItem({ iconName, order, isActive, title, page }){
+
+  const { navigate } = useNavigation()
 
   return(
     <>
-
+      <Text style={[styles.title, isActive && { bottom: getBottom(order) + 17 }]}>
+        {title}
+      </Text>
+      
       <TouchableOpacity
-        activeOpacity={0.9}
+        activeOpacity={0.6}
         style={[styles.fabItem, isActive && { bottom: getBottom(order) }]}
-        onPress={ () => {} }
+        onPress={ () => {
+          navigate(page)
+        } }
       >
         <Feather name={iconName} color='#FFF' size={20}/>
       </TouchableOpacity>
@@ -39,5 +47,15 @@ const styles = StyleSheet.create({
     right: 25,
     bottom: 20,
     zIndex: 99,
+  },
+  title:{
+    position: 'absolute',
+    fontSize: 18,
+    color: '#FFF',
+    fontWeight: 'bold',
+    right: 90,
+
+    // borderWidth:1,
+    // borderColor: 'red',
   },
 })
