@@ -1,5 +1,5 @@
 import { supabase } from '../services/api/supabaseService'
-
+import { hashPassword } from '../utils/functions/hashPassword'
 
 const useSupaDB = () => {
 
@@ -80,6 +80,34 @@ const useSupaDB = () => {
   }
 
 
+  const savePass = async (id, name, password) => {
+
+    const hashed = hashPassword(password)
+
+    const { data, error } = await supabase
+    .from('passwords')
+    .insert({
+      user_id: id,
+      describe: name,
+      hash_pass: hashed,
+    })
+    .select()
+
+    return {data, error}
+  }
+
+
+  const getPass = async (id) => {
+
+    const { data, error } = await supabase
+    .from('passwords')
+    .select()
+    .eq('user_id', id)
+
+    return {data, error}
+  }
+
+
   return{
     signUp,
     signIn,
@@ -87,6 +115,8 @@ const useSupaDB = () => {
     getUser,
     createUser,
     updateUser,
+    savePass,
+    getPass,
   }
 
 }

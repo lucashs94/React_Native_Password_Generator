@@ -1,23 +1,49 @@
 import { useState } from 'react'
-import { StatusBar, Image, Modal, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { StatusBar, Modal, StyleSheet, Text, TouchableOpacity, View, ActivityIndicator } from 'react-native'
+import { useNavigation } from '@react-navigation/native'
 import * as Clipboard from 'expo-clipboard'
-
-import ModalPassword from '../../components/modalPassword'
-import CustomInput from './Components/Input'
-
 import { Feather } from '@expo/vector-icons'
-import ModalDelete from '../../components/modalDelete'
+
+import useAuthContext from '../../contexts/authContext'
 import useToastNotify from '../../contexts/toastContext'
+import useSupaDB from '../../hooks/useSupaDB'
+import ModalPassword from '../../components/modalPassword'
+import ModalDelete from '../../components/modalDelete'
+import CustomInput from '../../components/Input'
 
 
-export default function Home() {
+
+export default function RandomPasswords() {
 
   const { newNotify } = useToastNotify()
+  const { savePass } = useSupaDB()
+  const { user } = useAuthContext()
+  const { navigate } = useNavigation()
 
   const [passwordName, setPasswordName] = useState('')
   const [password, setPassword] = useState('')
   const [modalVisible, setModalVisible] = useState(false)
   const [modalDeleteVisible, setModalDeleteVisible] = useState(false)
+  const [loading, setLoading] = useState(false)
+
+
+  async function savePasswordToDB(){
+
+    setLoading(true)
+
+    const { error } = await savePass(user?.id, passwordName, password)
+
+    newNotify({
+      type: 'success',
+      message: 'Senha salva com sucesso!',
+      duration: 2000,
+      show: true,
+      iconName: 'lock',
+    })
+
+    setLoading(false)
+    navigate('passwords')
+  }
 
 
   function handleGeneratePassword(){
@@ -96,11 +122,22 @@ export default function Home() {
         ]}
         activeOpacity={0.7}
         disabled={ !passwordName || !password }
-        // onPress={ handleGeneratePassword}
+        onPress={ savePasswordToDB }
       >
-        <Text style={styles.buttonText}>Salvar Senha</Text>
+        {loading ? 
+          <Text style={styles.buttonText}>
+            <ActivityIndicator size={'small'} color={'#FFF'} style={{marginRight:20}}/>
+            Salvando...
+          </Text>
+          : 
+          <Text style={[
+            styles.buttonText,  
+            { color: ( !password || !passwordName) ? '#ccc' : '#FFF' }
+          ]}>
+            Salvar Senha
+          </Text>
+        }
       </TouchableOpacity>
-
 
 
       <Modal 
@@ -145,9 +182,9 @@ export default function Home() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F3F3FF',
+    backgroundColor: '#ddd',
     alignItems: 'center',
-    marginTop: 50,
+    paddingTop: 50,
   },
   iconButton:{ 
     position: 'absolute',
@@ -187,4 +224,4 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-});
+})

@@ -29,6 +29,10 @@ export default function ModalDelete({ handleClose, setPassword, setPasswordName 
 
     <View style={styles.content}>
 
+      <Text style={styles.closeText}>
+        Deseja realmente excluir a senha?
+      </Text>
+
       <Pressable
         style={styles.closeButton}
         onPress={handleClose}
@@ -48,7 +52,7 @@ export default function ModalDelete({ handleClose, setPassword, setPasswordName 
         onPress={ handleDelete }
       >
         <Text style={styles.buttonText}>Excluir senha</Text>
-        <Feather name="trash" size={20} color="red" />
+        <Feather name="trash" size={20} color="#FF5733" />
       </TouchableOpacity>
 
     </View>
@@ -61,7 +65,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFF',
     width: '100%',
     borderRadius: 20,
-    paddingVertical: 30,
+    paddingVertical: 35,
     paddingHorizontal: 10,
     alignItems: 'center',
     justifyContent: 'flex-end',
@@ -75,13 +79,19 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
     justifyContent: 'center',
 
-    marginTop: 40,
+    marginTop: 30,
     borderRadius: 6,
+  },
+  closeText:{
+    fontSize: 18,
+    fontWeight: 'bold',
+    alignSelf: 'flex-start',
+    marginLeft: 30,
   },
   closeButton:{
     position: 'absolute',
     top: 30,
-    right: 5,
+    right: 0,
     borderRadius: 100,
     backgroundColor: '#ddd',
     alignSelf: 'flex-end',

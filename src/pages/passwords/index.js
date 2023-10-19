@@ -5,8 +5,9 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import { Feather } from '@expo/vector-icons'
 import { Ionicons } from '@expo/vector-icons'
 
-import useStorage from '@hooks/useStorage'
-import useToastNotify from '@contexts/toastContext'
+import useAuthContext from '../../contexts/authContext'
+import useSupaDB from '../../hooks/useSupaDB'
+import useToastNotify from '../../contexts/toastContext'
 import { themeApp } from '../../themes/GlobalTheme'
 
 import PasswordItem from './components/passwordItem'
@@ -19,7 +20,9 @@ export default function Passwords(){
   const navigation = useNavigation()
   const isFocused = useIsFocused()
 
-  const { getItem, removeItem } = useStorage()
+  const {user} = useAuthContext()
+
+  const { getPass } = useSupaDB()
   const { newNotify } = useToastNotify()
 
   const [listPass, setListPass] = useState([])
@@ -27,12 +30,16 @@ export default function Passwords(){
 
 
   useEffect(() =>{
+
     async function loadPasswords(){
-      const passwords = await getItem('@pass#')
+      const {data: passwords, error} = await getPass(user.id)
       setListPass(passwords)
     }
-     
-    loadPasswords()
+    
+    if(isFocused){
+      loadPasswords()
+    }
+
     setIsFabActive(false)
     
   }, [isFocused])
@@ -86,11 +93,11 @@ export default function Passwords(){
             showsVerticalScrollIndicator={false}
             style={styles.flatList}
             data={listPass}
-            keyExtractor={ item => String(item) }
+            keyExtractor={ item => String(item.id) }
             renderItem={ ({ item }) => (
 
               <PasswordItem 
-                password={item} 
+                item={item} 
                 removeData={ () => handleRemovePass(item) }
               />
 

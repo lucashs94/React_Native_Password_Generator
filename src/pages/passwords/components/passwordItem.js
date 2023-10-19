@@ -1,55 +1,132 @@
-import React, { useState } from 'react'
-import { Pressable, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import React, { useEffect, useState } from 'react'
+import { Dimensions, Pressable, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import { Feather } from '@expo/vector-icons'
-import { themeApp } from '@themes/GlobalTheme'
+import { formatRelative } from 'date-fns'
+import { ptBR } from 'date-fns/locale'
 
-export default function PasswordItem({ password, removeData }){
+import { decryptPassword } from '../../../utils/functions/hashPassword'
+import { themeApp } from '../../../themes/GlobalTheme'
+import { PanGestureHandler } from 'react-native-gesture-handler'
+import Animated, { useAnimatedGestureHandler, useAnimatedStyle, useSharedValue, withSpring, withTiming } from 'react-native-reanimated'
+import { useIsFocused } from '@react-navigation/native'
+
+const {width} = Dimensions.get('window')
+const threshold = -width * 0.3
+
+export default function PasswordItem({ item, removeData }){
+
+  const isFocused = useIsFocused()
 
   const [visible, setVisibile] = useState(false)
+  const dX = useSharedValue(0)
+  
+
+  useEffect(() => {
+
+    const resetCardPosition = () => {
+      dX.value = withTiming(0) //withSpring(0, { damping: 2, stiffness: 80 });
+    }
+    
+    return () => resetCardPosition()
+
+  }, [isFocused])
+
+
+  function decrypt(hashed){
+    return decryptPassword(hashed)
+  }
+
+
+  function formatDate(date){
+
+    return formatRelative(new Date(date), new Date(), { locale: ptBR })
+  }
+
+  const gestureHandler = useAnimatedGestureHandler({
+
+    onStart: (_, context) => {
+      context.lastPosition = dX.value
+    },
+    onActive: (e, context) => {
+      
+      if(e.translationX < 0){
+        dX.value = e.translationX + context.lastPosition
+      }
+
+    },
+    onEnd: (e) => {
+
+      if(e.translationX < threshold){
+        dX.value = withTiming(0)
+
+      } else {
+        dX.value = withSpring(threshold)
+      }
+      
+    },
+  })
+
+
+  const itemStyle = useAnimatedStyle(() => {
+    return{
+      transform:[
+        {
+          translateX: dX.value
+        }
+      ]
+    }
+  })
+
 
   return(
-    <Pressable
-      style={styles.areaItem}
-      onLongPress={removeData}
-    >
-      <View
-        style={styles.textArea}
-      >
-        <Text
-          style={styles.textTitle}
+    <PanGestureHandler onGestureEvent={gestureHandler}>
+      
+      <Animated.View style={itemStyle}>
+        <Pressable
+          style={styles.areaItem}
+          // onLongPress={removeData}
+          // onPress={() => console.log('teste')}
         >
-          Titulo da senha
-        </Text>
-        <Text
-          style={styles.textItem}
-        >
-          {
-            visible ?
-            password :
-            '*'.repeat(password.length)
-          }
-        </Text>
-        <Text style={styles.textDate}>Salvo em: 10/20/2022</Text>
-      </View>
-
-      <View style={{flexDirection: 'row', gap: 15, marginRight: 5, }}>
-        <TouchableOpacity
-          style={{ }}
-          activeOpacity={0.7}
-          // onPress={ () => setVisibile(!visible) }
-        >
-          <Feather name='copy' size={20} color='#777'/>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={{ }}
-          activeOpacity={0.7}
-          onPress={ () => setVisibile(!visible) }
-        >
-          <Feather name={visible ? 'eye-off' : 'eye'} size={20} color='#777'/>
-        </TouchableOpacity>
-      </View>
-    </Pressable>
+          <View
+            style={styles.textArea}
+          >
+            <Text
+              style={styles.textTitle}
+            >
+              {item.describe}
+            </Text>
+            <Text
+              style={styles.textItem}
+            >
+              {
+                visible ?
+                decrypt(item.hash_pass) :
+                '*'.repeat(decrypt(item.hash_pass).length)
+              }
+            </Text>
+            <Text style={styles.textDate}>
+              {formatDate(item.created_at)}
+            </Text>
+          </View>
+          <View style={{flexDirection: 'row', gap: 15, marginRight: 5, }}>
+            <TouchableOpacity
+              style={{ }}
+              activeOpacity={0.7}
+              // onPress={ () => setVisibile(!visible) }
+            >
+              <Feather name='copy' size={20} color='#777'/>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={{ }}
+              activeOpacity={0.7}
+              onPress={ () => setVisibile(!visible) }
+            >
+              <Feather name={visible ? 'eye-off' : 'eye'} size={20} color='#777'/>
+            </TouchableOpacity>
+          </View>
+        </Pressable>
+      </Animated.View>
+    </PanGestureHandler>
   )
 }
 

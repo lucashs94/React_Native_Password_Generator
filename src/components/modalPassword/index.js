@@ -1,17 +1,25 @@
 import React, { useEffect, useState } from 'react'
 import { View, Text, StyleSheet, Pressable, TouchableOpacity } from 'react-native'
-
+import { useIsFocused } from '@react-navigation/native'
 import Slider from '@react-native-community/slider'
 import { Ionicons } from '@expo/vector-icons';
 
-import { getRandomPass } from '../../utils/functions'
-
+import { getRandomPass } from '../../utils/functions/randomPassword'
 
 
 export default function ModalPassword({ setPassword, handleClose }){
 
+  const isFocused = useIsFocused()
+
   const [size, setSize] = useState(8)
   const [tempPass, setTempPass] = useState('')
+
+
+  useEffect(() => {
+    if(isFocused){
+      handleGeneratePassword()
+    }
+  },[isFocused])
 
 
   function handleGeneratePassword(){

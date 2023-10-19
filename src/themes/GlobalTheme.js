@@ -19,11 +19,12 @@ export const themeApp = {
   },
   notifications:{
     colors:{
-      success: '#43D29E',
+      success: '#4CAF50',
       warning: '#FD951f',
-      // error: '#E91E63',
       error: '#FF5733',
       default: '#3A405B',
+      // success: '#43D29E',
+      // error: '#E91E63',
     },
   },
   
