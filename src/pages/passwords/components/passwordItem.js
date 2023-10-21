@@ -1,19 +1,20 @@
 import React, { useEffect, useState } from 'react'
 import { Dimensions, Pressable, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import { Feather } from '@expo/vector-icons'
+import * as Clipboard from 'expo-clipboard'
 import { formatRelative } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
 
 import { decryptPassword } from '../../../utils/functions/hashPassword'
 import { themeApp } from '../../../themes/GlobalTheme'
 import { PanGestureHandler } from 'react-native-gesture-handler'
-import Animated, { useAnimatedGestureHandler, useAnimatedStyle, useSharedValue, withSpring, withTiming } from 'react-native-reanimated'
+import Animated, { runOnJS, useAnimatedGestureHandler, useAnimatedStyle, useSharedValue, withSpring, withTiming } from 'react-native-reanimated'
 import { useIsFocused } from '@react-navigation/native'
 
 const {width} = Dimensions.get('window')
 const threshold = -width * 0.3
 
-export default function PasswordItem({ item, removeData }){
+export default function PasswordItem({ item, removeData, newNotify, openedCard, openCardCommand }){
 
   const isFocused = useIsFocused()
 
@@ -32,6 +33,25 @@ export default function PasswordItem({ item, removeData }){
   }, [isFocused])
 
 
+  useEffect(() => {
+    dX.value = withSpring(0)
+    
+  }, [openedCard])
+  
+  
+  async function handleCopy(){
+    const pass = decrypt(item.hash_pass)
+    await Clipboard.setStringAsync(pass)
+
+    newNotify({
+      message: 'Senha copiada para a area de transferencia!',
+      duration: 2000,
+      show: true,
+      iconName: 'info',
+    })
+  }
+
+
   function decrypt(hashed){
     return decryptPassword(hashed)
   }
@@ -42,27 +62,42 @@ export default function PasswordItem({ item, removeData }){
     return formatRelative(new Date(date), new Date(), { locale: ptBR })
   }
 
+
   const gestureHandler = useAnimatedGestureHandler({
 
     onStart: (_, context) => {
       context.lastPosition = dX.value
+
+      runOnJS(openCardCommand)(item.id)
+
     },
     onActive: (e, context) => {
-      
-      if(e.translationX < 0){
+
+      if( e.translationX < 0 ){
         dX.value = e.translationX + context.lastPosition
+        
+      }else{
+        if(dX.value !== 0){
+          dX.value = e.translationX + context.lastPosition
+        }
       }
 
     },
     onEnd: (e) => {
 
-      if(e.translationX < threshold){
-        dX.value = withTiming(0)
+      if(e.translationX < 0){
 
-      } else {
-        dX.value = withSpring(threshold)
+        if(e.translationX < threshold){
+          dX.value = withTiming(0)
+  
+        } else{
+          dX.value = withTiming(threshold)
+        }
+
+      }else{
+        dX.value = withTiming(0)
       }
-      
+
     },
   })
 
@@ -79,7 +114,10 @@ export default function PasswordItem({ item, removeData }){
 
 
   return(
-    <PanGestureHandler onGestureEvent={gestureHandler}>
+    <PanGestureHandler 
+      onGestureEvent={gestureHandler} 
+      activeOffsetX={[-20, 5]}
+    >
       
       <Animated.View style={itemStyle}>
         <Pressable
@@ -108,11 +146,12 @@ export default function PasswordItem({ item, removeData }){
               {formatDate(item.created_at)}
             </Text>
           </View>
+
           <View style={{flexDirection: 'row', gap: 15, marginRight: 5, }}>
             <TouchableOpacity
               style={{ }}
               activeOpacity={0.7}
-              // onPress={ () => setVisibile(!visible) }
+              onPress={ handleCopy }
             >
               <Feather name='copy' size={20} color='#777'/>
             </TouchableOpacity>

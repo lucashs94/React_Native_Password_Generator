@@ -14,7 +14,6 @@ import PasswordItem from './components/passwordItem'
 import FabItem from './components/FabItem'
 
 
-
 export default function Passwords(){
 
   const navigation = useNavigation()
@@ -27,6 +26,7 @@ export default function Passwords(){
 
   const [listPass, setListPass] = useState([])
   const [isFabActive, setIsFabActive] = useState(false)
+  const [openedCard, setOpenedCard] = useState(null)
 
 
   useEffect(() =>{
@@ -89,20 +89,26 @@ export default function Passwords(){
         </View>
 
         <View style={styles.content}>
+
           <FlatList
-            showsVerticalScrollIndicator={false}
             style={styles.flatList}
             data={listPass}
             keyExtractor={ item => String(item.id) }
-            renderItem={ ({ item }) => (
+            showsVerticalScrollIndicator={false}
+            renderItem={ ({ item, index }) => (
 
               <PasswordItem 
                 item={item} 
                 removeData={ () => handleRemovePass(item) }
+                newNotify={newNotify}
+                openCard={ index === openedCard }
+                openedCard={openedCard}
+                openCardCommand={ setOpenedCard }
               />
 
             )}
           />
+
         </View>
 
       </View>
@@ -208,10 +214,8 @@ const styles = StyleSheet.create({
   content:{
     flex: 1,
     paddingHorizontal: 14,
-    paddingTop: 10
   },
   flatList:{
-    flex:1,
     paddingTop: 14,
   },
   fabButton:{

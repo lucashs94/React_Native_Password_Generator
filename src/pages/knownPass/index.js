@@ -99,7 +99,7 @@ export default function KnownPasswords() {
           disabled={!password || !passwordName}
           onPress={ () => setModalDeleteVisible(true) }
         >
-          <Text style={styles.optionsButtonText}>
+          <Text style={[styles.optionsButtonText, { color: '#FF5733' }]}>
             Excluir senha
           </Text>
           <Feather name="trash" size={20} color="#FF5733" />
